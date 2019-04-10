@@ -1,0 +1,159 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <iomanip>
+#include <cmath>
+#include <typeinfo>
+#include <bits/stdc++.h> 
+#include<string.h>
+
+using namespace std;
+
+class Tax{
+    public:
+      double salestax = 0.0;
+      double total =0.0;
+   
+//return false if Item is book or food or any medical product
+bool isItemwithnotax(string str) 
+{ 
+   bool flag = true;
+   string word = ""; 
+   std::vector<string> v = {"chocolate","chocolates","headache","pills","bar","book"};
+   istringstream ss(str); 
+  
+    do{ 
+        // Read a word 
+        string word; 
+        ss >> word ; 
+        if(std::find(v.begin(),v.end(),word)!=v.end()){
+           flag=false;
+        }
+     } while (ss); 
+       
+    return flag;
+}
+
+//return true if Item is imported
+bool isImported(string str) 
+{ 
+   bool flag = false;
+   string word = ""; 
+   std::vector<string> v = {"imported","Imported"};
+   istringstream ss(str); 
+  
+    do { 
+        // Read a word 
+        string word; 
+        ss >> word; 
+  
+        
+    if(std::find(v.begin(),v.end(),word)!=v.end()){
+           
+           flag=true;
+           
+           
+       }
+    } while (ss); 
+    
+    return flag;
+}
+
+
+//Return Last Element which is Price here
+string lastelement(string str) 
+{ 
+   string word = ""; 
+  
+       for (auto x : str) 
+   { 
+       if (x == ' ') 
+       { 
+           word = ""; 
+       } 
+       else
+       { 
+           word = word + x; 
+       } 
+   }  
+   return word;
+}
+
+//calculate SalesTax
+    double taxCalculation(double tax, double price){
+     double  t = (price*tax)/100.0;
+             t  = ceil(t * 20.0) / 20.0;
+            double final_amount = price + t;
+           salestax += t;
+            total += final_amount;
+     
+    return final_amount;   
+        
+        
+    }
+    
+    void printTotal(){
+    Tax::salestax = round(salestax * 100.0) / 100.0;
+    Tax::total = round(total * 100.0) / 100.0;
+    cout << "Sales Tax:" << salestax << endl;
+    cout << "Total:" << total;
+    }
+};
+
+//main function
+int main()
+{
+    double final_amount = 0;
+    Tax tobj; 
+    string str;
+    
+    
+    //read input from console
+    while (getline(std::cin, str) ) {
+        
+    //break when line is empty
+    if (str.empty())
+        break;
+     
+    bool flag = tobj.isItemwithnotax(str); //check if Item is food/medical product/book
+    bool isimported = tobj.isImported(str);//check if item is imported
+    string last = tobj.lastelement(str);//get last element i.e. price of item
+    float price = std::stof(last);
+    //if(Item is not food/medical product/book and also it is imported i.e. 15% tax)
+    if(flag!=0 && isimported==1){
+    final_amount = tobj.taxCalculation(15.0, price);
+    }
+    else if(flag != 0 && isimported==0){
+        final_amount = tobj.taxCalculation(10.0, price);
+    }
+    else if(flag == 0 && isimported==1){
+            final_amount = tobj.taxCalculation(5.0, price);
+    }
+    else{
+             final_amount = tobj.taxCalculation(0.0, price);
+    }
+    
+    istringstream ss(str); 
+    
+    //print output
+    do { 
+        string word; 
+        string at = "at";
+        ss >> word; 
+        
+       if(word == at){
+            cout << ":"<< " ";
+       }
+       if(word !=last && word !=at){
+           cout << word << " ";
+       }
+       if(word == last){
+            cout << final_amount << endl;
+       }
+    } while (ss); 
+    }
+    
+ tobj.printTotal();
+    return 0;
+    }
+    
